@@ -105,10 +105,11 @@ def train_embeddings():
     val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=128)
     classifier = nn.Sequential(OrderedDict([
         # ('drop', nn.Dropout(0.2)),
-        ('fc1', nn.Linear(1024, 1000)),
+        ('fc1', nn.Linear(1024, 500)),
         ('relu1', nn.ReLU()),
-        ('fc2', nn.Linear(1000, 500)),
-        ('relu2', nn.ReLU()),
+        # ('drop', nn.Dropout(0.5)),
+        # ('fc2', nn.Linear(1000, 500)),
+        # ('relu2', nn.ReLU()),
         ('fc3', nn.Linear(500, 101))
     ]))
     classifier.to(device)
@@ -116,6 +117,7 @@ def train_embeddings():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(classifier.parameters(), lr=0.0001)
     start = time.time()
+    best_acc = 0.0
     for epoch in range(100):
         for i, data in enumerate(train_dataloader, 0):
             inputs, labels = data[0].to(device), data[1].to(device)
@@ -136,7 +138,12 @@ def train_embeddings():
                 equals = top_class == labels.view(*top_class.shape)
                 accuracy += torch.mean(equals.type(torch.FloatTensor)).item()
                 batches += 1
-        print("Accuracy", accuracy / batches)
+        print("epoch:", epoch, "Accuracy", accuracy / batches)
+        if accuracy / batches > best_acc:
+            best_acc = accuracy / batches
+            print("best acc", best_acc)
+        elif accuracy / batches < best_acc:
+            return
 
 
 def train_full(trainloader):
