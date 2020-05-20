@@ -10,6 +10,8 @@ import numpy as np
 import torch.optim as optim
 from collections import OrderedDict
 import time
+import matplotlib.pyplot as plt
+from PIL import Image
 
 
 def load_data(path):
@@ -204,11 +206,17 @@ def train_full(trainloader):
 
 
 if __name__ == "__main__":
-    data_dir = os.path.join("datasets", "food-101", "images")
-    trainloader = load_data(data_dir)
+    # data_dir = os.path.join("datasets", "food-101", "images")
+    # trainloader = load_data(data_dir)
     # model = models.densenet121(pretrained=True)
     # model.classifier = Identity()
     # create_embedding(model, trainloader, None)
-    train_embeddings()
+    # train_embeddings()
+    path = "./datasets/UNIMIB2016-images/original/20151127_123952.jpg"
+    img = Image.open(path)
+    img.show()
+    # plt.imshow(path)
+    # plt.show()
+
 
 
